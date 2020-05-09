@@ -28,6 +28,8 @@ while getopts ":w:k:" arg; do
 done
 shift $((OPTIND-1))
 
+# Arrary of CEF-formatted events
+# DATETOKEN is replaced with a dynamically generated date and time before the record is sent to Sentinel
 declare -a siemEvents=( 
     "CEF:0|Microsoft|ATA|1.9.0.0|AbnormalSensitiveGroupMembershipChangeSuspiciousActivity|Abnormal modification of sensitive groups|5|start=DATETOKEN app=GroupMembershipChangeEvent suser=krbtgt msg=krbtgt has uncharacteristically modified sensitive group memberships. externalId=2024 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c113d028ca1ec1250ca0491" 
     "CEF:0|Microsoft|ATA|1.9.0.0|LdapBruteForceSuspiciousActivity|Brute force attack using LDAP simple bind|5|start=DATETOKEN app=Ldap msg=10000 password guess attempts were made on 100 accounts from W2012R2-000000-Server. One account password was successfully guessed. externalId=2004 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114acb8ca1ec1250cacdcb" 
@@ -52,12 +54,16 @@ declare -a siemEvents=(
     "CEF:0|Microsoft|ATA|1.9.0.0|MaliciousServiceCreationSuspiciousActivity|Suspicious service creation|5|start=DATETOKEN app=ServiceInstalledEvent shost=W2012R2-000000-Server msg=triservice created FakeService in order to execute potentially malicious commands on W2012R2-000000-Server. externalId=2026 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114b2d8ca1ec1250caf577" 
 )
 
+# How many items are in the array of CEF-formatted events
 EVENTCOUNT=${#siemEvents[@]}
 
+# Get a random date time formatted for the CEF string
+# Currently anything between today and up to 3 days ago
 dateNowRand() {
     echo `date -d "-$(( ( RANDOM % 3 )  + 1 )) days" +%FT%R.0000000Z`
 }
 
+# Build the CEF-formatted string, injecting a random date and tiem for the event date
 getSiemEventString() {
     RANDEVENTPOSITION=$(( ( RANDOM % $EVENTCOUNT ) ))
     RANDEVENTSTRING="${siemEvents[RANDEVENTPOSITION]}"
@@ -65,8 +71,10 @@ getSiemEventString() {
     echo "${RANDEVENTSTRING/DATETOKEN/$REPLACEMENTDATE}"
 }
 
+# Install CEF connector and connect to LA workspace using primary or secondary key
 sudo wget https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/DataConnectors/CEF/cef_installer.py&&sudo python cef_installer.py $WORKSPACEID $WORKSPACEKEY
 
+# Start pumping data (random selection from existing array)
 while :
 do
     logger -p local4.warn -t CEF "$(getSiemEventString;)"
