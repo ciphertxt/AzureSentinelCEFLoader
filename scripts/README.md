@@ -11,81 +11,81 @@ The following are sample CEF-formatted security and health alerts from Advanced 
 
 #### Abnormal modification of sensitive groups
 
-    ```sh
-    1 2018-12-12T16:53:22.925757+00:00 CENTER ATA 4688 AbnormalSensitiveGroupMembership CEF:0|Microsoft|ATA|1.9.0.0|AbnormalSensitiveGroupMembershipChangeSuspiciousActivity|Abnormal modification of sensitive groups|5|start=2018-12-12T18:52:58.0000000Z app=GroupMembershipChangeEvent suser=krbtgt msg=krbtgt has uncharacteristically modified sensitive group memberships. externalId=2024 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c113d028ca1ec1250ca0491
-    ```
+```sh
+1 2018-12-12T16:53:22.925757+00:00 CENTER ATA 4688 AbnormalSensitiveGroupMembership CEF:0|Microsoft|ATA|1.9.0.0|AbnormalSensitiveGroupMembershipChangeSuspiciousActivity|Abnormal modification of sensitive groups|5|start=2018-12-12T18:52:58.0000000Z app=GroupMembershipChangeEvent suser=krbtgt msg=krbtgt has uncharacteristically modified sensitive group memberships. externalId=2024 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c113d028ca1ec1250ca0491
+```
 
-    Command:
+Command:
 
-    ```sh
-    DATENOWRAND=`date -d "-$(( ( RANDOM % 3 )  + 1 )) days" +%FT%R.0000000Z`
-    logger -p local4.warn -t CEF "CEF:0|Microsoft|ATA|1.9.0.0|AbnormalSensitiveGroupMembershipChangeSuspiciousActivity|Abnormal modification of sensitive groups|5|start=${DATENOWRAND} app=GroupMembershipChangeEvent suser=krbtgt msg=krbtgt has uncharacteristically modified sensitive group memberships. externalId=2024 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c113d028ca1ec1250ca0491"
-    ```
+```sh
+DATENOWRAND=`date -d "-$(( ( RANDOM % 3 )  + 1 )) days" +%FT%R.0000000Z`
+logger -p local4.warn -t CEF "CEF:0|Microsoft|ATA|1.9.0.0|AbnormalSensitiveGroupMembershipChangeSuspiciousActivity|Abnormal modification of sensitive groups|5|start=${DATENOWRAND} app=GroupMembershipChangeEvent suser=krbtgt msg=krbtgt has uncharacteristically modified sensitive group memberships. externalId=2024 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c113d028ca1ec1250ca0491"
+```
 
 #### Brute force attack using LDAP simple bind
 
-    ```sh
-    12-12-2018 19:52:18 Auth.Warning 192.168.0.222 1 2018-12-12T17:52:18.899690+00:00 CENTER ATA 4688 LdapBruteForceSuspiciousActivity ‹¯¨CEF:0|Microsoft|ATA|1.9.0.0|LdapBruteForceSuspiciousActivity|Brute force attack using LDAP simple bind|5|start=2018-12-12T17:52:10.2350665Z app=Ldap msg=10000 password guess attempts were made on 100 accounts from W2012R2-000000-Server. One account password was successfully guessed. externalId=2004 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114acb8ca1ec1250cacdcb
-    ```
+```sh
+12-12-2018 19:52:18 Auth.Warning 192.168.0.222 1 2018-12-12T17:52:18.899690+00:00 CENTER ATA 4688 LdapBruteForceSuspiciousActivity ‹¯¨CEF:0|Microsoft|ATA|1.9.0.0|LdapBruteForceSuspiciousActivity|Brute force attack using LDAP simple bind|5|start=2018-12-12T17:52:10.2350665Z app=Ldap msg=10000 password guess attempts were made on 100 accounts from W2012R2-000000-Server. One account password was successfully guessed. externalId=2004 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114acb8ca1ec1250cacdcb
+```
 
-    Command:
+Command:
 
-    ```sh
-    DATENOWRAND=`date -d "-$(( ( RANDOM % 3 )  + 1 )) days" +%FT%R.0000000Z`
-    logger -p local4.warn -t CEF "CEF:0|Microsoft|ATA|1.9.0.0|LdapBruteForceSuspiciousActivity|Brute force attack using LDAP simple bind|5|start=${DATENOWRAND} app=Ldap msg=10000 password guess attempts were made on 100 accounts from W2012R2-000000-Server. One account password was successfully guessed. externalId=2004 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114acb8ca1ec1250cacdcb"
-    ```
+```sh
+DATENOWRAND=`date -d "-$(( ( RANDOM % 3 )  + 1 )) days" +%FT%R.0000000Z`
+logger -p local4.warn -t CEF "CEF:0|Microsoft|ATA|1.9.0.0|LdapBruteForceSuspiciousActivity|Brute force attack using LDAP simple bind|5|start=${DATENOWRAND} app=Ldap msg=10000 password guess attempts were made on 100 accounts from W2012R2-000000-Server. One account password was successfully guessed. externalId=2004 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114acb8ca1ec1250cacdcb"
+```
 
 #### Encryption downgrade activity (Golden Ticket)
 
-    ```sh
-    12-12-2018 20:12:35 Auth.Warning 192.168.0.222 1 2018-12-12T18:12:35.105942+00:00 CENTER ATA 4688 EncryptionDowngradeSuspiciousAct ‹¯¨CEF:0|Microsoft|ATA|1.9.0.0|EncryptionDowngradeSuspiciousActivity|Encryption downgrade activity|5|start=2018-12-12T18:10:35.0334169Z app=Kerberos msg=The encryption method of the TGT field of TGS_REQ message from W2012R2-000000-Server has been downgraded based on previously learned behavior. This may be a result of a Golden Ticket in-use on W2012R2-000000-Server. externalId=2009 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114f938ca1ec1250cafcfa
-    ```
+```sh
+12-12-2018 20:12:35 Auth.Warning 192.168.0.222 1 2018-12-12T18:12:35.105942+00:00 CENTER ATA 4688 EncryptionDowngradeSuspiciousAct ‹¯¨CEF:0|Microsoft|ATA|1.9.0.0|EncryptionDowngradeSuspiciousActivity|Encryption downgrade activity|5|start=2018-12-12T18:10:35.0334169Z app=Kerberos msg=The encryption method of the TGT field of TGS_REQ message from W2012R2-000000-Server has been downgraded based on previously learned behavior. This may be a result of a Golden Ticket in-use on W2012R2-000000-Server. externalId=2009 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114f938ca1ec1250cafcfa
+```
 
-    Command:
+Command:
 
-    ```sh
-    DATENOWRAND=`date -d "-$(( ( RANDOM % 3 )  + 1 )) days" +%FT%R.0000000Z`
-    logger -p local4.warn -t CEF "CEF:0|Microsoft|ATA|1.9.0.0|EncryptionDowngradeSuspiciousActivity|Encryption downgrade activity|5|start=${DATENOWRAND} app=Kerberos msg=The encryption method of the TGT field of TGS_REQ message from W2012R2-000000-Server has been downgraded based on previously learned behavior. This may be a result of a Golden Ticket in-use on W2012R2-000000-Server. externalId=2009 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114f938ca1ec1250cafcfa"
-    ```
+```sh
+DATENOWRAND=`date -d "-$(( ( RANDOM % 3 )  + 1 )) days" +%FT%R.0000000Z`
+logger -p local4.warn -t CEF "CEF:0|Microsoft|ATA|1.9.0.0|EncryptionDowngradeSuspiciousActivity|Encryption downgrade activity|5|start=${DATENOWRAND} app=Kerberos msg=The encryption method of the TGT field of TGS_REQ message from W2012R2-000000-Server has been downgraded based on previously learned behavior. This may be a result of a Golden Ticket in-use on W2012R2-000000-Server. externalId=2009 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114f938ca1ec1250cafcfa"
+```
 
 #### Encryption downgrade activity (overpass-the-hash)
 
-    ```sh
-    12-12-2018 19:00:31 Auth.Warning 192.168.0.222 1 2018-12-12T17:00:31.963485+00:00 CENTER ATA 4688 EncryptionDowngradeSuspiciousAct ‹¯¨CEF:0|Microsoft|ATA|1.9.0.0|EncryptionDowngradeSuspiciousActivity|Encryption downgrade activity|5|start=2018-12-12T17:00:31.2975188Z app=Kerberos msg=The encryption method of the Encrypted_Timestamp field of AS_REQ message from W2012R2-000000-Server has been downgraded based on previously learned behavior. This may be a result of a credential theft using Overpass-the-Hash from W2012R2-000000-Server. externalId=2010 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c113eaf8ca1ec1250ca0883
-    ```
+```sh
+12-12-2018 19:00:31 Auth.Warning 192.168.0.222 1 2018-12-12T17:00:31.963485+00:00 CENTER ATA 4688 EncryptionDowngradeSuspiciousAct ‹¯¨CEF:0|Microsoft|ATA|1.9.0.0|EncryptionDowngradeSuspiciousActivity|Encryption downgrade activity|5|start=2018-12-12T17:00:31.2975188Z app=Kerberos msg=The encryption method of the Encrypted_Timestamp field of AS_REQ message from W2012R2-000000-Server has been downgraded based on previously learned behavior. This may be a result of a credential theft using Overpass-the-Hash from W2012R2-000000-Server. externalId=2010 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c113eaf8ca1ec1250ca0883
+```
 
-    Command:
+Command:
 
-    ```sh
-    DATENOWRAND=`date -d "-$(( ( RANDOM % 3 )  + 1 )) days" +%FT%R.0000000Z`
-    logger -p local4.warn -t CEF "CEF:0|Microsoft|ATA|1.9.0.0|EncryptionDowngradeSuspiciousActivity|Encryption downgrade activity|5|start=${DATENOWRAND} app=Kerberos msg=The encryption method of the Encrypted_Timestamp field of AS_REQ message from W2012R2-000000-Server has been downgraded based on previously learned behavior. This may be a result of a credential theft using Overpass-the-Hash from W2012R2-000000-Server. externalId=2010 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c113eaf8ca1ec1250ca0883"
-    ```
+```sh
+DATENOWRAND=`date -d "-$(( ( RANDOM % 3 )  + 1 )) days" +%FT%R.0000000Z`
+logger -p local4.warn -t CEF "CEF:0|Microsoft|ATA|1.9.0.0|EncryptionDowngradeSuspiciousActivity|Encryption downgrade activity|5|start=${DATENOWRAND} app=Kerberos msg=The encryption method of the Encrypted_Timestamp field of AS_REQ message from W2012R2-000000-Server has been downgraded based on previously learned behavior. This may be a result of a credential theft using Overpass-the-Hash from W2012R2-000000-Server. externalId=2010 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c113eaf8ca1ec1250ca0883"
+```
 
 #### Encryption downgrade activity (Skeleton Key)
 
-    ```sh
-    12-12-2018 20:07:24 Auth.Warning 192.168.0.222 1 2018-12-12T18:07:24.065140+00:00 CENTER ATA 4688 EncryptionDowngradeSuspiciousAct ‹¯¨CEF:0|Microsoft|ATA|1.9.0.0|EncryptionDowngradeSuspiciousActivity|Encryption downgrade activity|5|start=2018-12-12T18:07:24.0222746Z app=Kerberos msg=The encryption method of the ETYPE_INFO2 field of KRB_ERR message from W2012R2-000000-Server has been downgraded based on previously learned behavior. This may be a result of a Skeleton Key on DC1. externalId=2011 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114e5c8ca1ec1250cafafe
-    ```
+```sh
+12-12-2018 20:07:24 Auth.Warning 192.168.0.222 1 2018-12-12T18:07:24.065140+00:00 CENTER ATA 4688 EncryptionDowngradeSuspiciousAct ‹¯¨CEF:0|Microsoft|ATA|1.9.0.0|EncryptionDowngradeSuspiciousActivity|Encryption downgrade activity|5|start=2018-12-12T18:07:24.0222746Z app=Kerberos msg=The encryption method of the ETYPE_INFO2 field of KRB_ERR message from W2012R2-000000-Server has been downgraded based on previously learned behavior. This may be a result of a Skeleton Key on DC1. externalId=2011 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114e5c8ca1ec1250cafafe
+```
 
-    Command:
+Command:
 
-    ```sh
-    DATENOWRAND=`date -d "-$(( ( RANDOM % 3 )  + 1 )) days" +%FT%R.0000000Z`
-    logger -p local4.warn -t CEF "CEF:0|Microsoft|ATA|1.9.0.0|EncryptionDowngradeSuspiciousActivity|Encryption downgrade activity|5|start=${DATENOWRAND} app=Kerberos msg=The encryption method of the ETYPE_INFO2 field of KRB_ERR message from W2012R2-000000-Server has been downgraded based on previously learned behavior. This may be a result of a Skeleton Key on DC1. externalId=2011 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114e5c8ca1ec1250cafafe"
-    ```
+```sh
+DATENOWRAND=`date -d "-$(( ( RANDOM % 3 )  + 1 )) days" +%FT%R.0000000Z`
+logger -p local4.warn -t CEF "CEF:0|Microsoft|ATA|1.9.0.0|EncryptionDowngradeSuspiciousActivity|Encryption downgrade activity|5|start=${DATENOWRAND} app=Kerberos msg=The encryption method of the ETYPE_INFO2 field of KRB_ERR message from W2012R2-000000-Server has been downgraded based on previously learned behavior. This may be a result of a Skeleton Key on DC1. externalId=2011 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114e5c8ca1ec1250cafafe"
+```
 
 #### Honeytoken activity
 
-    ```sh
-    12-12-2018 19:51:52 Auth.Warning 192.168.0.222 1 2018-12-12T17:51:52.659618+00:00 CENTER ATA 4688 HoneytokenActivitySuspiciousActi ‹¯¨CEF:0|Microsoft|ATA|1.9.0.0|HoneytokenActivitySuspiciousActivity|Honeytoken activity|5|start=2018-12-12T17:51:52.5855994Z app=Kerberos suser=USR78982 msg=The following activities were performed by USR78982 LAST78982:\r\nAuthenticated from CLIENT1 using NTLM when accessing domain1.test.local\cifs on DC1. externalId=2014 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114ab88ca1ec1250ca7f76
-    ```
+```sh
+12-12-2018 19:51:52 Auth.Warning 192.168.0.222 1 2018-12-12T17:51:52.659618+00:00 CENTER ATA 4688 HoneytokenActivitySuspiciousActi ‹¯¨CEF:0|Microsoft|ATA|1.9.0.0|HoneytokenActivitySuspiciousActivity|Honeytoken activity|5|start=2018-12-12T17:51:52.5855994Z app=Kerberos suser=USR78982 msg=The following activities were performed by USR78982 LAST78982:\r\nAuthenticated from CLIENT1 using NTLM when accessing domain1.test.local\cifs on DC1. externalId=2014 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114ab88ca1ec1250ca7f76
+```
 
-    Command:
+Command:
 
-    ```sh
-    DATENOWRAND=`date -d "-$(( ( RANDOM % 3 )  + 1 )) days" +%FT%R.0000000Z`
-    logger -p local4.warn -t CEF "CEF:0|Microsoft|ATA|1.9.0.0|HoneytokenActivitySuspiciousActivity|Honeytoken activity|5|start=${DATENOWRAND} app=Kerberos suser=USR78982 msg=The following activities were performed by USR78982 LAST78982:\r\nAuthenticated from CLIENT1 using NTLM when accessing domain1.test.local\cifs on DC1. externalId=2014 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114ab88ca1ec1250ca7f76"
-    ```
+```sh
+DATENOWRAND=`date -d "-$(( ( RANDOM % 3 )  + 1 )) days" +%FT%R.0000000Z`
+logger -p local4.warn -t CEF "CEF:0|Microsoft|ATA|1.9.0.0|HoneytokenActivitySuspiciousActivity|Honeytoken activity|5|start=${DATENOWRAND} app=Kerberos suser=USR78982 msg=The following activities were performed by USR78982 LAST78982:\r\nAuthenticated from CLIENT1 using NTLM when accessing domain1.test.local\cifs on DC1. externalId=2014 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114ab88ca1ec1250ca7f76"
+```
 
 #### Identity theft using Pass-the-Hash attack
 
