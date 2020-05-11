@@ -1,7 +1,29 @@
 # Table of contents <!-- omit in toc -->
 
-- [Abnormal modification of sensitive groups](#abnormal-modification-of-sensitive-groups)
-- [Brute force attack using LDAP simple bind](#brute-force-attack-using-ldap-simple-bind)
+- [Sample logs](#sample-logs)
+  - [Microsoft logs](#microsoft-logs)
+    - [Abnormal modification of sensitive groups](#abnormal-modification-of-sensitive-groups)
+    - [Brute force attack using LDAP simple bind](#brute-force-attack-using-ldap-simple-bind)
+    - [Encryption downgrade activity (Golden Ticket)](#encryption-downgrade-activity-golden-ticket)
+    - [Encryption downgrade activity (overpass-the-hash)](#encryption-downgrade-activity-overpass-the-hash)
+    - [Encryption downgrade activity (Skeleton Key)](#encryption-downgrade-activity-skeleton-key)
+    - [Honeytoken activity](#honeytoken-activity)
+    - [Identity theft using Pass-the-Hash attack](#identity-theft-using-pass-the-hash-attack)
+    - [Identity theft using Pass-the-Ticket attack](#identity-theft-using-pass-the-ticket-attack)
+    - [Kerberos Golden Ticket activity](#kerberos-golden-ticket-activity)
+    - [Malicious data protection private information request](#malicious-data-protection-private-information-request)
+    - [Malicious replication of Directory Services](#malicious-replication-of-directory-services)
+    - [Privilege escalation using forged authorization data](#privilege-escalation-using-forged-authorization-data)
+    - [Reconnaissance using Directory Services queries](#reconnaissance-using-directory-services-queries)
+    - [Reconnaissance using account enumeration](#reconnaissance-using-account-enumeration)
+    - [Reconnaissance using DNS](#reconnaissance-using-dns)
+    - [Reconnaissance using SMB session enumeration](#reconnaissance-using-smb-session-enumeration)
+    - [Remote execution attempt detected](#remote-execution-attempt-detected)
+    - [Unusual protocol implementation](#unusual-protocol-implementation)
+    - [Suspicion of identity theft based on abnormal behavior](#suspicion-of-identity-theft-based-on-abnormal-behavior)
+    - [Suspicious authentication failures](#suspicious-authentication-failures)
+    - [Suspicious service creation](#suspicious-service-creation)
+- [Fortinet logs](#fortinet-logs)
 
 ## Sample logs
 
@@ -285,4 +307,3 @@ logger -p local4.warn -t CEF “CEF:0|Microsoft|ATA|1.9.0.0|MaliciousServiceCrea
 ## Fortinet logs
 
 The following are sample CEF-formatted security and health alerts from Fortinet and a Fortigate security solution (see [FortiOS Log Message Reference](https://docs.fortinet.com/document/fortigate/6.0.9/fortios-log-message-reference/127777/examples-of-cef-support)). Normally these would be forwarded to another SIEM for analysis, but the script(s) in this repository use the records to populate Azure Sentinel using the [CEF data connector](https://docs.microsoft.com/azure/sentinel/connect-common-event-format) with a randomized date for each record.
-
