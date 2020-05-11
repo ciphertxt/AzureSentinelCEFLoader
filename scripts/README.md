@@ -281,3 +281,8 @@ Command:
 DATENOWRAND=`date -d “-$(( ( RANDOM % 3 )  + 1 )) days” +%FT%R.0000000Z`
 logger -p local4.warn -t CEF “CEF:0|Microsoft|ATA|1.9.0.0|MaliciousServiceCreationSuspiciousActivity|Suspicious service creation|5|start=${DATENOWRAND} app=ServiceInstalledEvent shost=W2012R2-000000-Server msg=triservice created FakeService in order to execute potentially malicious commands on W2012R2-000000-Server. externalId=2026 cs1Label=url cs1=https://192.168.0.220/suspiciousActivity/5c114b2d8ca1ec1250caf577”
 ```
+
+## Fortinet logs
+
+The following are sample CEF-formatted security and health alerts from Fortinet and a Fortigate security solution (see [FortiOS Log Message Reference](https://docs.fortinet.com/document/fortigate/6.0.9/fortios-log-message-reference/127777/examples-of-cef-support)). Normally these would be forwarded to another SIEM for analysis, but the script(s) in this repository use the records to populate Azure Sentinel using the [CEF data connector](https://docs.microsoft.com/azure/sentinel/connect-common-event-format) with a randomized date for each record.
+
