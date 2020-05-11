@@ -11,6 +11,7 @@
         },
         "workspaceName": {
             "type": "string",
+            "defaultValue": "sentinel",
             "metadata": {
                 "description": "Name for the Log Analytics workspace used to aggregate data"
             }
@@ -52,7 +53,7 @@
             "type": "string",
             "defaultValue": "[subscription().subscriptionId]",
             "metadata": {
-                "description": "Sbscription Id to monitor"
+                "description": "Subscription Id to monitor"
             }
         },
         "winEventProviders": {
@@ -73,10 +74,87 @@
             "metadata": {
                 "description": "A list of Windows Event Providers that you would like to collect.  Windows Security Auditing is not enabled through this option. It is enabled through Azure Sentinel Data Connectors."
             }
+        },
+        "loaderVmName": {
+            "type": "string",
+            "defaultValue": "sentinelloader",
+            "metadata": {
+                "description": "Name of the loader vm"
+            }
+        },
+        "loaderVmSize": {
+            "type": "string",
+            "defaultValue": "Standard_B1ms",
+            "metadata": {
+                "description": "Size of the loader vm"
+            }
+        },
+        "loaderOsDiskType": {
+            "type": "string",
+            "defaultValue": "Premium_LRS",
+            "metadata": {
+                "description": "Disk type of the loader vm"
+            }
+        },
+        "loaderVmUsername": {
+            "type": "string",
+            "defaultValue": "demouser",
+            "metadata": {
+                "description": "Username for the loader vm"
+            }
+        },
+        "loaderVmPassword": {
+            "type": "securestring",
+            "defaultValue": "demo@pass123",
+            "metadata": {
+                "description": "The password for the administrator account of the loader vm"
+            }
+        },
+        "loaderInstallscriptUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Full path to script to execute"
+            },
+            "defaultValue": "https://raw.githubusercontent.com/ciphertxt/AzureSentinelCEFLoader/master/scripts/sentinelCEFLoader.sh"
+        },
+        "loaderScriptFileName": {
+            "type": "string",
+            "metadata": {
+                "description": "Script to execute"
+            },
+            "defaultValue": "sentinelCEFLoader.sh"
         }
     },
     "variables": {
-        "uniqueWorkspace": "[concat(parameters('workspaceName'), uniquestring(resourceGroup().id, parameters('utcValue')))]"
+        "uniqueWorkspace": "[concat(parameters('workspaceName'), uniquestring(resourceGroup().id, parameters('utcValue')))]",
+        "vnetName": "sentinelloader-vnet",
+        "vnetAddressPrefixes": "10.0.0.0/16",
+        "vnetSubnetPrefix": "10.0.0.0/24",
+        "vnetSubnetName": "default",
+        "publicIpAddressName": "sentineloader-ip",
+        "publicIpAddressSku": "Basic",
+        "publicIpAddressType": "Dynamic",
+        "networkSecurityGroupName": "sentinelloader-nsg",
+        "networkSecurityGroupRules": [
+            {
+                "name":"SSH",
+                "properties": 
+                {
+                    "priority":300,
+                    "protocol":"TCP",
+                    "access":"Allow",
+                    "direction":"Inbound",
+                    "sourceAddressPrefix":"*",
+                    "sourcePortRange":"*",
+                    "destinationAddressPrefix":"*",
+                    "destinationPortRange":"22"
+                }
+            }
+        ],
+        "networkInterfaceName": "sentinelloader-nic",
+        "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
+        "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('vnetSubnetName'))]"
     },
     "resources": [
         {
@@ -191,6 +269,146 @@
                 "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('uniqueWorkspace'))]",
                 "[resourceId('Microsoft.OperationsManagement/solutions/', concat('WindowsFirewall','(', variables('uniqueWorkspace'),')'))]"
             ]
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('vnetName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('vnetAddressPrefixes')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('vnetSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('vnetSubnetPrefix')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIpAddresses",
+            "apiVersion": "2019-02-01",
+            "name": "[variables('publicIpAddressName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[variables('publicIpAddressSku')]"
+            },
+            "properties": {
+                "publicIpAllocationMethod": "[variables('publicIpAddressType')]"
+            }
+        },
+        {
+            "name": "[variables('networkSecurityGroupName')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-02-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": "[variables('networkSecurityGroupRules')]"
+            }
+        },
+        {
+            "name": "[variables('networkInterfaceName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2019-07-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]",
+                "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
+                "[concat('Microsoft.Network/publicIpAddresses/', variables('publicIpAddressName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIpAddress": {
+                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('publicIpAddressName'))]"
+                            }
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('nsgId')]"
+                }
+            }
+        },
+        {
+            "name": "[parameters('loaderVmName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]",
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('uniqueWorkspace'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('loaderVmSize')]"
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('loaderOsDiskType')]"
+                        }
+                    },
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[parameters('loaderVmName')]",
+                    "adminUsername": "[parameters('loaderVmUsername')]",
+                    "adminPassword": "[parameters('loaderVmPassword')]"
+                }
+            },
+            "resources": [
+                {
+                    "name": "DeployLoader",
+                    "type": "extensions",
+                    "location": "[parameters('location')]",
+                    "apiVersion": "2016-03-30",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('loaderVmName'))]"
+                    ],
+                    "tags": {
+                        "displayName": "ConfigureVM"
+                    },
+                    "properties": {
+                        "publisher": "Microsoft.Azure.Extensions",
+                        "type": "CustomScript",
+                        "typeHandlerVersion": "2.0",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "skipDos2Unix":false          
+                        },
+                        "protectedSettings": {
+                            "commandToExecute": "[concat('echo \"bash -c \\\"./', parameters('loaderScriptFileName'), ' -w ', reference(resourceId('Microsoft.OperationalInsights/workspaces/', variables('uniqueWorkspace')), '2015-11-01-preview').customerId, ' -k ', listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', variables('uniqueWorkspace')), '2015-11-01-preview').primarySharedKey, '\\\"\" | at now +1 minutes')]",
+                            "fileUris": ["[parameters('loaderInstallscriptUrl')]"]  
+                        }
+                    }
+                }
+            ]
         }
     ],
     "outputs": {
@@ -205,6 +423,10 @@
         "workspaceKeyOutput": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', variables('uniqueWorkspace')), '2015-11-01-preview').primarySharedKey]"
+        },
+        "executedJob": {
+            "type": "string",
+            "value": "[concat('echo \"bash -c \\\"./', parameters('loaderScriptFileName'), ' -w ', reference(resourceId('Microsoft.OperationalInsights/workspaces/', variables('uniqueWorkspace')), '2015-11-01-preview').customerId, ' -k ', listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', variables('uniqueWorkspace')), '2015-11-01-preview').primarySharedKey, '\\\"\" | at now +1 minutes')]"
         }
     }
 }
